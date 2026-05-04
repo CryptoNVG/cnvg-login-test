@@ -88,6 +88,95 @@
         color: var(--c-lime);
         opacity: 0.9;
       }
+
+      .flower {
+        display: block;
+        margin: 0 auto 2.2rem;
+        width: clamp(220px, 38vw, 460px);
+        height: auto;
+        filter: drop-shadow(0 0 24px rgba(236, 72, 153, 0.55))
+                drop-shadow(0 0 60px rgba(168, 85, 247, 0.35));
+        animation: flower-spin 28s linear infinite 2s;
+      }
+
+      .flower .petal {
+        mix-blend-mode: screen;
+      }
+
+      .flower .petal-cell {
+        transform-origin: 100px 100px;
+        animation:
+          petal-bloom 0.75s cubic-bezier(.2, .9, .3, 1.1) calc(var(--i, 0) * 0.07s) both,
+          petal-pulse 4.2s ease-in-out calc(var(--i, 0) * 0.07s + 0.75s) infinite;
+      }
+
+      .flower .core {
+        transform-origin: 100px 100px;
+        animation:
+          core-bloom 0.55s cubic-bezier(.2, .9, .3, 1.15) 1.5s both,
+          core-pulse 2.8s ease-in-out 2.05s infinite;
+      }
+
+      .flower .core-dot {
+        transform-origin: 100px 100px;
+        animation: core-bloom 0.45s cubic-bezier(.2, .9, .3, 1.15) 1.7s both;
+      }
+
+      .flower .ring {
+        transform-origin: 100px 100px;
+        animation:
+          ring-spin 18s linear infinite,
+          ring-fade 1s ease-out 1.6s both;
+      }
+
+      .flower .ring--rev {
+        animation:
+          ring-spin 24s linear infinite reverse,
+          ring-fade 1s ease-out 1.8s both;
+      }
+
+      @keyframes flower-spin {
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes petal-bloom {
+        0%   { transform: scale(0);    opacity: 0; }
+        60%  { transform: scale(1.08); opacity: 1; }
+        100% { transform: scale(1);    opacity: 1; }
+      }
+
+      @keyframes petal-pulse {
+        0%, 100% { transform: scale(1);    opacity: 0.92; }
+        50%      { transform: scale(1.04); opacity: 1; }
+      }
+
+      @keyframes core-bloom {
+        0%   { transform: scale(0);   opacity: 0; }
+        60%  { transform: scale(1.2); opacity: 1; }
+        100% { transform: scale(1);   opacity: 1; }
+      }
+
+      @keyframes core-pulse {
+        0%, 100% { transform: scale(1);    filter: brightness(1); }
+        50%      { transform: scale(1.18); filter: brightness(1.4); }
+      }
+
+      @keyframes ring-spin {
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes ring-fade {
+        from { stroke-opacity: 0; }
+        to   { stroke-opacity: 1; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .flower,
+        .flower .petal-cell,
+        .flower .core,
+        .flower .core-dot,
+        .flower .ring { animation: none; }
+      }
       .grid {
         position: fixed;
         inset: 0;
@@ -107,6 +196,73 @@
   <body>
     <div class="grid"></div>
     <div class="scene">
+      <svg
+        class="flower"
+        viewBox="0 0 200 200"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="Cyberpunk flower"
+      >
+        <defs>
+          <linearGradient id="petalGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#a855f7" />
+            <stop offset="25%"  stop-color="#ec4899" />
+            <stop offset="50%"  stop-color="#fb923c" />
+            <stop offset="75%"  stop-color="#2dd4bf" />
+            <stop offset="100%" stop-color="#a3e635" />
+          </linearGradient>
+
+          <radialGradient id="coreGrad" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0%"   stop-color="#ffffff" />
+            <stop offset="35%"  stop-color="#fbbf24" />
+            <stop offset="70%"  stop-color="#ec4899" />
+            <stop offset="100%" stop-color="#a855f7" stop-opacity="0" />
+          </radialGradient>
+
+          <path
+            id="petal"
+            d="M100 100
+               C 118 70, 118 38, 100 18
+               C 82 38, 82 70, 100 100 Z"
+          />
+        </defs>
+
+        <!-- outer rings -->
+        <circle class="ring" cx="100" cy="100" r="92"
+                fill="none" stroke="url(#petalGrad)" stroke-width="0.6"
+                stroke-dasharray="2 6" />
+        <circle class="ring ring--rev" cx="100" cy="100" r="78"
+                fill="none" stroke="#2dd4bf" stroke-width="0.4"
+                stroke-dasharray="1 4" opacity="0.5" />
+
+        <!-- back layer petals -->
+        <g opacity="0.55">
+          <g transform="rotate(22.5 100 100)"><g class="petal-cell" style="--i: 0"><use href="#petal" class="petal" fill="url(#petalGrad)" /></g></g>
+          <g transform="rotate(67.5 100 100)"><g class="petal-cell" style="--i: 2"><use href="#petal" class="petal" fill="url(#petalGrad)" /></g></g>
+          <g transform="rotate(112.5 100 100)"><g class="petal-cell" style="--i: 4"><use href="#petal" class="petal" fill="url(#petalGrad)" /></g></g>
+          <g transform="rotate(157.5 100 100)"><g class="petal-cell" style="--i: 6"><use href="#petal" class="petal" fill="url(#petalGrad)" /></g></g>
+          <g transform="rotate(202.5 100 100)"><g class="petal-cell" style="--i: 8"><use href="#petal" class="petal" fill="url(#petalGrad)" /></g></g>
+          <g transform="rotate(247.5 100 100)"><g class="petal-cell" style="--i: 10"><use href="#petal" class="petal" fill="url(#petalGrad)" /></g></g>
+          <g transform="rotate(292.5 100 100)"><g class="petal-cell" style="--i: 12"><use href="#petal" class="petal" fill="url(#petalGrad)" /></g></g>
+          <g transform="rotate(337.5 100 100)"><g class="petal-cell" style="--i: 14"><use href="#petal" class="petal" fill="url(#petalGrad)" /></g></g>
+        </g>
+
+        <!-- front petals + neon outline -->
+        <g>
+          <g transform="rotate(0 100 100)"><g class="petal-cell" style="--i: 1"><use href="#petal" class="petal" fill="url(#petalGrad)" /><use href="#petal" fill="none" stroke="#ffffff" stroke-width="0.4" opacity="0.35" /></g></g>
+          <g transform="rotate(45 100 100)"><g class="petal-cell" style="--i: 3"><use href="#petal" class="petal" fill="url(#petalGrad)" /><use href="#petal" fill="none" stroke="#ffffff" stroke-width="0.4" opacity="0.35" /></g></g>
+          <g transform="rotate(90 100 100)"><g class="petal-cell" style="--i: 5"><use href="#petal" class="petal" fill="url(#petalGrad)" /><use href="#petal" fill="none" stroke="#ffffff" stroke-width="0.4" opacity="0.35" /></g></g>
+          <g transform="rotate(135 100 100)"><g class="petal-cell" style="--i: 7"><use href="#petal" class="petal" fill="url(#petalGrad)" /><use href="#petal" fill="none" stroke="#ffffff" stroke-width="0.4" opacity="0.35" /></g></g>
+          <g transform="rotate(180 100 100)"><g class="petal-cell" style="--i: 9"><use href="#petal" class="petal" fill="url(#petalGrad)" /><use href="#petal" fill="none" stroke="#ffffff" stroke-width="0.4" opacity="0.35" /></g></g>
+          <g transform="rotate(225 100 100)"><g class="petal-cell" style="--i: 11"><use href="#petal" class="petal" fill="url(#petalGrad)" /><use href="#petal" fill="none" stroke="#ffffff" stroke-width="0.4" opacity="0.35" /></g></g>
+          <g transform="rotate(270 100 100)"><g class="petal-cell" style="--i: 13"><use href="#petal" class="petal" fill="url(#petalGrad)" /><use href="#petal" fill="none" stroke="#ffffff" stroke-width="0.4" opacity="0.35" /></g></g>
+          <g transform="rotate(315 100 100)"><g class="petal-cell" style="--i: 15"><use href="#petal" class="petal" fill="url(#petalGrad)" /><use href="#petal" fill="none" stroke="#ffffff" stroke-width="0.4" opacity="0.35" /></g></g>
+        </g>
+
+        <!-- glowing core -->
+        <circle class="core" cx="100" cy="100" r="22" fill="url(#coreGrad)" />
+        <circle class="core-dot" cx="100" cy="100" r="6" fill="#ffffff" />
+      </svg>
+
       <h1 class="title">HELLO WORLD</h1>
       <div class="status">// CNVG HELLO</div>
     </div>
